@@ -1,59 +1,60 @@
-import React, { useState } from 'react'
-import { Animated } from 'react-native'
-import { TypingAnimation } from 'react-native-typing-animation'
-import { useUpdateLayoutEffect } from './hooks/useUpdateLayoutEffect'
+import React, { useState } from "react";
+import { Animated } from "react-native";
+// @ts-ignore
+import { TypingAnimation } from "react-native-typing-animation";
+import { useUpdateLayoutEffect } from "./hooks/useUpdateLayoutEffect";
 
 interface Props {
-  isTyping: boolean
+  isTyping: boolean;
 }
 
 const TypingIndicator = (props: Props) => {
-  const [yCoords, setYCoords] = useState(new Animated.Value(200))
-  const [heightScale, setHeightScale] = useState(new Animated.Value(0))
-  const [marginScale, setmarginScale] = useState(new Animated.Value(0))
+  const [yCoords] = useState(new Animated.Value(200));
+  const [heightScale] = useState(new Animated.Value(0));
+  const [marginScale] = useState(new Animated.Value(0));
 
   // on isTyping fire side effect
   useUpdateLayoutEffect(() => {
     if (props.isTyping) {
-      slideIn()
+      slideIn();
     } else {
-      slideOut()
+      slideOut();
     }
-  }, [props.isTyping])
+  }, [props.isTyping]);
 
   // side effect
   const slideIn = () => {
     Animated.parallel([
       Animated.spring(yCoords, {
-        toValue: 0,
+        toValue: 0
       }),
       Animated.timing(heightScale, {
         toValue: 35,
-        duration: 250,
+        duration: 250
       }),
       Animated.timing(marginScale, {
         toValue: 8,
-        duration: 250,
-      }),
-    ]).start()
-  }
+        duration: 250
+      })
+    ]).start();
+  };
 
   // side effect
   const slideOut = () => {
     Animated.parallel([
       Animated.spring(yCoords, {
-        toValue: 200,
+        toValue: 200
       }),
       Animated.timing(heightScale, {
         toValue: 0,
-        duration: 250,
+        duration: 250
       }),
       Animated.timing(marginScale, {
         toValue: 0,
-        duration: 250,
-      }),
-    ]).start()
-  }
+        duration: 250
+      })
+    ]).start();
+  };
 
   return (
     <Animated.View
@@ -61,26 +62,26 @@ const TypingIndicator = (props: Props) => {
         {
           transform: [
             {
-              translateY: yCoords,
-            },
+              translateY: yCoords
+            }
           ],
           height: heightScale,
           marginLeft: 8,
           marginBottom: marginScale,
           width: 45,
           borderRadius: 15,
-          backgroundColor: '#f0f0f0',
-        },
+          backgroundColor: "#f0f0f0"
+        }
       ]}
     >
       <TypingAnimation
         style={{ marginLeft: 6, marginTop: 7.2 }}
         dotRadius={4}
         dotMargin={5.5}
-        dotColor={'rgba(0, 0, 0, 0.38)'}
+        dotColor={"rgba(0, 0, 0, 0.38)"}
       />
     </Animated.View>
-  )
-}
+  );
+};
 
-export default TypingIndicator
+export default TypingIndicator;

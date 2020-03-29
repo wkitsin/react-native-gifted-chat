@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types'
-import React, { RefObject } from 'react'
+import PropTypes from "prop-types";
+import React, { RefObject } from "react";
 
 import {
   FlatList,
@@ -13,41 +13,41 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   StyleProp,
-  ViewStyle,
-} from 'react-native'
+  ViewStyle
+} from "react-native";
 
-import LoadEarlier from './LoadEarlier'
-import Message from './Message'
-import Color from './Color'
-import { User, IMessage, Reply } from './types'
-import { warning } from './utils'
-import TypingIndicator from './TypingIndicator'
+import LoadEarlier from "./LoadEarlier";
+import Message from "./Message";
+import Color from "./Color";
+import { User, IMessage, Reply } from "./types";
+import { warning } from "./utils";
+import TypingIndicator from "./TypingIndicator";
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   containerAlignTop: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start"
   },
   contentContainerStyle: {
     flexGrow: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start"
   },
   emptyChatContainer: {
     flex: 1,
-    transform: [{ scaleY: -1 }],
+    transform: [{ scaleY: -1 }]
   },
   headerWrapper: {
-    flex: 1,
+    flex: 1
   },
   listStyle: {
-    flex: 1,
+    flex: 1
   },
   scrollToBottomStyle: {
     opacity: 0.8,
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     bottom: 30,
     zIndex: 999,
@@ -55,40 +55,40 @@ const styles = StyleSheet.create({
     width: 40,
     borderRadius: 20,
     backgroundColor: Color.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: Color.black,
     shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 1,
-  },
-})
+    shadowRadius: 1
+  }
+});
 
 export interface MessageContainerProps<TMessage extends IMessage> {
-  messages?: TMessage[]
-  isTyping?: boolean
-  user?: User
-  listViewProps: Partial<ListViewProps>
-  inverted?: boolean
-  loadEarlier?: boolean
-  alignTop?: boolean
-  scrollToBottom?: boolean
-  scrollToBottomStyle?: StyleProp<ViewStyle>
-  invertibleScrollViewProps?: any
-  extraData?: any
-  scrollToBottomOffset?: number
-  forwardRef?: RefObject<FlatList<IMessage>>
-  renderChatEmpty?(): React.ReactNode
-  renderFooter?(props: MessageContainerProps<TMessage>): React.ReactNode
-  renderMessage?(props: Message['props']): React.ReactNode
-  renderLoadEarlier?(props: LoadEarlier['props']): React.ReactNode
-  scrollToBottomComponent?(): React.ReactNode
-  onLoadEarlier?(): void
-  onQuickReply?(replies: Reply[]): void
+  messages?: TMessage[];
+  isTyping?: boolean;
+  user?: User;
+  listViewProps: Partial<ListViewProps>;
+  inverted?: boolean;
+  loadEarlier?: boolean;
+  alignTop?: boolean;
+  scrollToBottom?: boolean;
+  scrollToBottomStyle?: StyleProp<ViewStyle>;
+  invertibleScrollViewProps?: any;
+  extraData?: any;
+  scrollToBottomOffset?: number;
+  forwardRef?: RefObject<FlatList<IMessage>>;
+  renderChatEmpty?(): React.ReactNode;
+  renderFooter?(props: MessageContainerProps<TMessage>): React.ReactNode;
+  renderMessage?(props: Message["props"]): React.ReactNode;
+  renderLoadEarlier?(props: LoadEarlier["props"]): React.ReactNode;
+  scrollToBottomComponent?(): React.ReactNode;
+  onLoadEarlier?(): void;
+  onQuickReply?(replies: Reply[]): void;
 }
 
 interface State {
-  showScrollBottom: boolean
+  showScrollBottom: boolean;
 }
 
 export default class MessageContainer<
@@ -111,8 +111,8 @@ export default class MessageContainer<
     scrollToBottom: false,
     scrollToBottomOffset: 200,
     alignTop: false,
-    scrollToBottomStyle: {},
-  }
+    scrollToBottomStyle: {}
+  };
 
   static propTypes = {
     messages: PropTypes.arrayOf(PropTypes.object),
@@ -127,25 +127,25 @@ export default class MessageContainer<
     inverted: PropTypes.bool,
     loadEarlier: PropTypes.bool,
     invertibleScrollViewProps: PropTypes.object,
-    extraData: PropTypes.array,
+    extraData: PropTypes.any,
     scrollToBottom: PropTypes.bool,
     scrollToBottomOffset: PropTypes.number,
     scrollToBottomComponent: PropTypes.func,
-    alignTop: PropTypes.bool,
-  }
+    alignTop: PropTypes.bool
+  };
 
   state = {
-    showScrollBottom: false,
-  }
+    showScrollBottom: false
+  };
 
   componentDidMount() {
     if (this.props.messages && this.props.messages.length === 0) {
-      this.attachKeyboardListeners()
+      this.attachKeyboardListeners();
     }
   }
 
   componentWillUnmount() {
-    this.detachKeyboardListeners()
+    this.detachKeyboardListeners();
   }
 
   componentDidUpdate(prevProps: MessageContainerProps<TMessage>) {
@@ -155,141 +155,147 @@ export default class MessageContainer<
       this.props.messages &&
       this.props.messages.length > 0
     ) {
-      this.detachKeyboardListeners()
+      this.detachKeyboardListeners();
     } else if (
       prevProps.messages &&
       this.props.messages &&
       prevProps.messages.length > 0 &&
       this.props.messages.length === 0
     ) {
-      this.attachKeyboardListeners()
+      this.attachKeyboardListeners();
     }
   }
 
   attachKeyboardListeners = () => {
-    const { invertibleScrollViewProps: invertibleProps } = this.props
+    const { invertibleScrollViewProps: invertibleProps } = this.props;
     if (invertibleProps) {
       Keyboard.addListener(
-        'keyboardWillShow',
-        invertibleProps.onKeyboardWillShow,
-      )
-      Keyboard.addListener('keyboardDidShow', invertibleProps.onKeyboardDidShow)
+        "keyboardWillShow",
+        invertibleProps.onKeyboardWillShow
+      );
       Keyboard.addListener(
-        'keyboardWillHide',
-        invertibleProps.onKeyboardWillHide,
-      )
-      Keyboard.addListener('keyboardDidHide', invertibleProps.onKeyboardDidHide)
+        "keyboardDidShow",
+        invertibleProps.onKeyboardDidShow
+      );
+      Keyboard.addListener(
+        "keyboardWillHide",
+        invertibleProps.onKeyboardWillHide
+      );
+      Keyboard.addListener(
+        "keyboardDidHide",
+        invertibleProps.onKeyboardDidHide
+      );
     }
-  }
+  };
 
   detachKeyboardListeners = () => {
-    const { invertibleScrollViewProps: invertibleProps } = this.props
+    const { invertibleScrollViewProps: invertibleProps } = this.props;
     Keyboard.removeListener(
-      'keyboardWillShow',
-      invertibleProps.onKeyboardWillShow,
-    )
+      "keyboardWillShow",
+      invertibleProps.onKeyboardWillShow
+    );
     Keyboard.removeListener(
-      'keyboardDidShow',
-      invertibleProps.onKeyboardDidShow,
-    )
+      "keyboardDidShow",
+      invertibleProps.onKeyboardDidShow
+    );
     Keyboard.removeListener(
-      'keyboardWillHide',
-      invertibleProps.onKeyboardWillHide,
-    )
+      "keyboardWillHide",
+      invertibleProps.onKeyboardWillHide
+    );
     Keyboard.removeListener(
-      'keyboardDidHide',
-      invertibleProps.onKeyboardDidHide,
-    )
-  }
+      "keyboardDidHide",
+      invertibleProps.onKeyboardDidHide
+    );
+  };
 
   renderTypingIndicator = () => {
-    return <TypingIndicator isTyping={this.props.isTyping || false} />
-  }
+    return <TypingIndicator isTyping={this.props.isTyping || false} />;
+  };
 
   renderFooter = () => {
     if (this.props.renderFooter) {
-      return this.props.renderFooter(this.props)
+      return this.props.renderFooter(this.props);
     }
 
-    return this.renderTypingIndicator()
-  }
+    return this.renderTypingIndicator();
+  };
 
   renderLoadEarlier = () => {
     if (this.props.loadEarlier === true) {
       const loadEarlierProps = {
-        ...this.props,
-      }
+        ...this.props
+      };
       if (this.props.renderLoadEarlier) {
-        return this.props.renderLoadEarlier(loadEarlierProps)
+        return this.props.renderLoadEarlier(loadEarlierProps);
       }
-      return <LoadEarlier {...loadEarlierProps} />
+      return <LoadEarlier {...loadEarlierProps} />;
     }
-    return null
-  }
+    return null;
+  };
 
   scrollTo(options: { animated?: boolean; offset: number }) {
     if (this.props.forwardRef && this.props.forwardRef.current && options) {
-      this.props.forwardRef.current.scrollToOffset(options)
+      this.props.forwardRef.current.scrollToOffset(options);
     }
   }
 
   scrollToBottom = (animated: boolean = true) => {
-    const { inverted } = this.props
+    const { inverted } = this.props;
     if (inverted) {
-      this.scrollTo({ offset: 0, animated })
+      this.scrollTo({ offset: 0, animated });
     } else if (this.props.forwardRef && this.props.forwardRef.current) {
-      this.props.forwardRef!.current!.scrollToEnd({ animated })
+      this.props.forwardRef!.current!.scrollToEnd({ animated });
     }
-  }
+  };
 
   handleOnScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const {
       nativeEvent: {
         contentOffset: { y: contentOffsetY },
         contentSize: { height: contentSizeHeight },
-        layoutMeasurement: { height: layoutMeasurementHeight },
-      },
-    } = event
-    const { scrollToBottomOffset } = this.props
+        layoutMeasurement: { height: layoutMeasurementHeight }
+      }
+    } = event;
+    const { scrollToBottomOffset } = this.props;
     if (this.props.inverted) {
       if (contentOffsetY > scrollToBottomOffset!) {
-        this.setState({ showScrollBottom: true })
+        this.setState({ showScrollBottom: true });
       } else {
-        this.setState({ showScrollBottom: false })
+        this.setState({ showScrollBottom: false });
       }
     } else {
       if (
         contentOffsetY < scrollToBottomOffset! &&
         contentSizeHeight - layoutMeasurementHeight > scrollToBottomOffset!
       ) {
-        this.setState({ showScrollBottom: true })
+        this.setState({ showScrollBottom: true });
       } else {
-        this.setState({ showScrollBottom: false })
+        this.setState({ showScrollBottom: false });
       }
     }
-  }
+  };
 
   renderRow = ({ item, index }: ListRenderItemInfo<TMessage>) => {
     if (!item._id && item._id !== 0) {
-      warning('GiftedChat: `_id` is missing for message', JSON.stringify(item))
+      warning("GiftedChat: `_id` is missing for message", JSON.stringify(item));
     }
     if (!item.user) {
       if (!item.system) {
         warning(
-          'GiftedChat: `user` is missing for message',
-          JSON.stringify(item),
-        )
+          "GiftedChat: `user` is missing for message",
+          JSON.stringify(item)
+        );
       }
-      item.user = { _id: 0 }
+      item.user = { _id: 0 };
     }
-    const { messages, user, inverted, ...restProps } = this.props
+    const { messages, user, inverted, ...restProps } = this.props;
     if (messages && user) {
       const previousMessage =
-        (inverted ? messages[index + 1] : messages[index - 1]) || {}
+        (inverted ? messages[index + 1] : messages[index - 1]) || {};
       const nextMessage =
-        (inverted ? messages[index - 1] : messages[index + 1]) || {}
+        (inverted ? messages[index - 1] : messages[index + 1]) || {};
 
-      const messageProps: Message['props'] = {
+      const messageProps: Message["props"] = {
         ...restProps,
         user,
         key: item._id,
@@ -297,16 +303,16 @@ export default class MessageContainer<
         previousMessage,
         inverted,
         nextMessage,
-        position: item.user._id === user._id ? 'right' : 'left',
-      }
+        position: item.user._id === user._id ? "right" : "left"
+      };
 
       if (this.props.renderMessage) {
-        return this.props.renderMessage(messageProps)
+        return this.props.renderMessage(messageProps);
       }
-      return <Message {...messageProps} />
+      return <Message {...messageProps} />;
     }
-    return null
-  }
+    return null;
+  };
 
   renderChatEmpty = () => {
     if (this.props.renderChatEmpty) {
@@ -316,27 +322,27 @@ export default class MessageContainer<
         <View style={styles.emptyChatContainer}>
           {this.props.renderChatEmpty()}
         </View>
-      )
+      );
     }
-    return <View style={styles.container} />
-  }
+    return <View style={styles.container} />;
+  };
 
   renderHeaderWrapper = () => (
     <View style={styles.headerWrapper}>{this.renderLoadEarlier()}</View>
-  )
+  );
 
   renderScrollBottomComponent() {
-    const { scrollToBottomComponent } = this.props
+    const { scrollToBottomComponent } = this.props;
 
     if (scrollToBottomComponent) {
-      return scrollToBottomComponent()
+      return scrollToBottomComponent();
     }
 
-    return <Text>V</Text>
+    return <Text>V</Text>;
   }
 
   renderScrollToBottomWrapper() {
-    const propsStyle = this.props.scrollToBottomStyle || {}
+    const propsStyle = this.props.scrollToBottomStyle || {};
     return (
       <View style={[styles.scrollToBottomStyle, propsStyle]}>
         <TouchableOpacity
@@ -346,7 +352,7 @@ export default class MessageContainer<
           {this.renderScrollBottomComponent()}
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 
   onLayoutList = () => {
@@ -357,15 +363,15 @@ export default class MessageContainer<
     ) {
       setTimeout(
         () => this.scrollToBottom && this.scrollToBottom(false),
-        15 * this.props.messages!.length,
-      )
+        15 * this.props.messages!.length
+      );
     }
-  }
+  };
 
-  keyExtractor = (item: TMessage) => `${item._id}`
+  keyExtractor = (item: TMessage) => `${item._id}`;
 
   render() {
-    const { inverted } = this.props
+    const { inverted } = this.props;
     return (
       <View
         style={
@@ -377,7 +383,7 @@ export default class MessageContainer<
           : null}
         <FlatList
           ref={this.props.forwardRef}
-          extraData={[this.props.extraData, this.props.isTyping]}
+          extraData={this.props.extraData}
           keyExtractor={this.keyExtractor}
           enableEmptySections
           automaticallyAdjustContentInsets={false}
@@ -400,6 +406,6 @@ export default class MessageContainer<
           {...this.props.listViewProps}
         />
       </View>
-    )
+    );
   }
 }

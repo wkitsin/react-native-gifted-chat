@@ -1,70 +1,69 @@
-import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  
   StyleProp,
   ViewStyle,
   TextStyle,
-  TouchableOpacityProps,
-} from 'react-native'
-import Color from './Color'
+  TouchableOpacityProps
+} from "react-native";
+import Color from "./Color";
 
 const styles = StyleSheet.create({
   container: {
     height: 44,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end"
   },
   text: {
     color: Color.defaultBlue,
-    fontWeight: '600',
+    fontWeight: "600",
     fontSize: 17,
     backgroundColor: Color.backgroundTransparent,
     marginBottom: 12,
     marginLeft: 10,
-    marginRight: 10,
-  },
-})
+    marginRight: 10
+  }
+});
 
 export interface SendProps {
-  text?: string
-  label?: string
-  containerStyle?: StyleProp<ViewStyle>
-  textStyle?: StyleProp<TextStyle>
-  children?: React.ReactNode
-  alwaysShowSend?: boolean
-  disabled?: boolean
-  sendButtonProps?: Partial<TouchableOpacityProps>
-  onSend?({ text }: { text: string }, b: boolean): void
+  text?: string;
+  label?: string;
+  containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+  children?: React.ReactNode;
+  alwaysShowSend?: boolean;
+  disabled?: boolean;
+  sendButtonProps?: Partial<TouchableOpacityProps>;
+  onSend?({ text }: { text: string }, b: boolean): void;
 }
 
 export default class Send extends Component<SendProps> {
   static defaultProps = {
-    text: '',
+    text: "",
     onSend: () => {},
-    label: 'Send',
+    label: "Send",
     containerStyle: {},
     textStyle: {},
     children: null,
     alwaysShowSend: false,
     disabled: false,
-    sendButtonProps: null,
-  }
+    sendButtonProps: null
+  };
 
   static propTypes = {
     text: PropTypes.string,
     onSend: PropTypes.func,
     label: PropTypes.string,
-    containerStyle: {},
+    containerStyle: PropTypes.object,
     textStyle: PropTypes.any,
     children: PropTypes.element,
     alwaysShowSend: PropTypes.bool,
     disabled: PropTypes.bool,
-    sendButtonProps: PropTypes.object,
-  }
+    sendButtonProps: PropTypes.object
+  };
 
   render() {
     const {
@@ -76,21 +75,21 @@ export default class Send extends Component<SendProps> {
       label,
       alwaysShowSend,
       disabled,
-      sendButtonProps,
-    } = this.props
+      sendButtonProps
+    } = this.props;
     if (alwaysShowSend || (text && text.trim().length > 0)) {
       return (
         <TouchableOpacity
-          testID='send'
+          testID="send"
           accessible
-          accessibilityLabel='send'
+          accessibilityLabel="send"
           style={[styles.container, containerStyle]}
           onPress={() => {
             if (text && onSend) {
-              onSend({ text: text.trim() }, true)
+              onSend({ text: text.trim() }, true);
             }
           }}
-          accessibilityTraits='button'
+          accessibilityTraits="button"
           disabled={disabled}
           {...sendButtonProps}
         >
@@ -98,8 +97,8 @@ export default class Send extends Component<SendProps> {
             {children || <Text style={[styles.text, textStyle]}>{label}</Text>}
           </View>
         </TouchableOpacity>
-      )
+      );
     }
-    return <View />
+    return <View />;
   }
 }
